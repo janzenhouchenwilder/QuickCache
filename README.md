@@ -27,6 +27,11 @@ To use/n
 var cache = new QuickCache<string, string>(10000);/n
 or for dependency injection/n
 services.AddSingleton<IQuickCache<string, string>, QuickCache<int, int>>();/n
+If you want to set the size of the cache\n
+builder.Services.AddSingleton<IQuickCache<int, Person>>(options =>
+{
+    return new QuickCache<int, Person>(50000, 20000);
+});
 
 Add or update an item/n
 cache.Put("key", "value", new QuickCacheEntryOptions { Size = 1, AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10) });/n
