@@ -1,12 +1,17 @@
 # QuickCache
 A memory cache that evicts based on LRU, time, and size.
 
-QuickCache is a lightweight, thread-safe in-memory cache for .NET that supports:/n
-Least Recently Used (LRU) eviction/n
-Absolute and sliding expiration/n
-Size-based eviction/n
-Background cleanup/n
-Bulk insert support for high-performance scenarios/n
+QuickCache is a lightweight, thread-safe in-memory cache for .NET that supports:
+
+Least Recently Used (LRU) eviction
+
+Absolute and sliding expiration
+
+Size-based eviction
+
+Background cleanup
+
+Bulk insert support for high-performance scenarios
 
 Features
 Thread-safe using internal locking/n
