@@ -1,60 +1,58 @@
 # QuickCache
 A memory cache that evicts based on LRU, time, and size.
 
-QuickCache is a lightweight, thread-safe in-memory cache for .NET that supports:
+QuickCache is a lightweight, thread-safe in-memory cache for .NET that supports:<br>
 
-Least Recently Used (LRU) eviction
-
-Absolute and sliding expiration
-
-Size-based eviction
-
-Background cleanup
-
+Least Recently Used (LRU) eviction<br>
+Absolute and sliding expiration<br>
+Size-based eviction<br>
+Background cleanup<br>
 Bulk insert support for high-performance scenarios
 
-Features
-Thread-safe using internal locking/n
-LRU eviction via linked list tracking/n
-Configurable size limits to prevent memory overuse/n
-Expiration support/n
-Absolute expiration/n
-Sliding expiration/n
-Bulk operations to reduce lock contention/n
-Background cleanup using a timer/n
+__Features__<br>
+Thread-safe using internal locking<br>
+LRU eviction via linked list tracking<br>
+Configurable size limits to prevent memory overuse<br>
+Expiration support<br>
+Absolute expiration<br>
+Sliding expiration<br>
+Bulk operations to reduce lock contention<br>
+Background cleanup using a timer
 
-Installation
-To install, clone the repository/n
+__Installation__
+To install, clone the repository
 
-git clone https://github.com/janzenhouchenwilder/QuickCache.git
+```git clone https://github.com/janzenhouchenwilder/QuickCache.git```
 
-To use/n
-var cache = new QuickCache<string, string>(10000);/n
-or for dependency injection/n
-services.AddSingleton<IQuickCache<string, string>, QuickCache<int, int>>();/n
-If you want to set the size of the cache\n
+__To use__<br>
+```var cache = new QuickCache<string, string>(10000);```<br>
+or for dependency injection<br>
+```services.AddSingleton<IQuickCache<string, string>, QuickCache<int, int>>();```<br>
+If you want to set the size of the cache<br>
+```
 builder.Services.AddSingleton<IQuickCache<int, Person>>(options =>
 {
     return new QuickCache<int, Person>(50000, 20000);
 });
+```
 
-Add or update an item/n
-cache.Put("key", "value", new QuickCacheEntryOptions { Size = 1, AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10) });/n
+__Add or update an item__<br>
+```cache.Put("key", "value", new QuickCacheEntryOptions { Size = 1, AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10) });```
 
-Retrieve an item/n
-if (cache.TryGet("key", out var value)) { Console.WriteLine(value); }/n
+__Retrieve an item__<br>
+```if (cache.TryGet("key", out var value)) { Console.WriteLine(value); }```
 
-Remove an item/n
-if (cache.TryGet("key", out var value)) { Console.WriteLine(value); }/n
+__Remove an item__<br>
+```if (cache.TryGet("key", out var value)) { Console.WriteLine(value); }```
 
-Insert multiple items (Large inserts)/n
-cache.PutMany(items);/n
+__Insert multiple items (Large inserts)__<br>
+```cache.PutMany(items);```
 
-Performance Notes/n
-Use PutMany for bulk inserts to avoid lock contention./n
-Designed for high-throughput with minimal allocations./n
+__Performance Notes__<br>
+Use `PutMany` for bulk inserts to avoid lock contention.<br>
+Designed for high-throughput with minimal allocations.
 
-Limitations/n
-In-memory only, not distributed/n
-Global lock may cause contention under extreme parallel locks/n
+__Limitations__<br>
+In-memory only, not distributed<br>
+Global lock may cause contention under extreme parallel locks
 
