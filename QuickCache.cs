@@ -111,7 +111,7 @@
         /// </summary>
         /// <param name="maxSize">Maximum size of all items.</param>
         /// <param name="capacity">Maximum number of cache entries.</param>
-        public QuickCache(long maxSize, int capacity = 3000)
+        public QuickCache(long maxSize = 10000, int capacity = 3000)
         {
             if (maxSize <= 0)
                 throw new ArgumentOutOfRangeException(nameof(maxSize));
@@ -191,6 +191,9 @@
         /// <param name="options">Optional cache entry configurations.</param>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if size is invalid.</exception>
         /// <exception cref="InsufficientMemoryException">Thrown if the size is greater than the max size of the cache.</exception>
+        /// <remarks>
+        /// Evicts the least recently used item in the cache if at capacity.
+        /// </remarks>
         public void Put(TKey key, TValue value, QuickCacheEntryOptions? options = null)
         {
             ThrowIfDisposed();
@@ -210,9 +213,21 @@
             _timer.Change(Timeout.Infinite, Timeout.Infinite);
             lock (_lock)
             {
+                int count = 0;
                 foreach (var (key, value, options) in items)
                 {
-                    PutIndividualItem(key, value, options);
+                    lock (_lock)
+                    {
+                        PutIndividualItem(key, value, options);
+
+                        count++;
+                        if (count % 500 == 0)
+                        {
+                            Monitor.Exit(_lock);
+                            Thread.Yield();
+                            Monitor.Enter(_lock);
+                        }
+                    }
                 }
             }
             _timer.Change(_cleanupInterval, _cleanupInterval);
