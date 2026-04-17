@@ -11,7 +11,7 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<PackageId>JanzenHWilder.QuickCache</PackageId>
+		<PackageId>LightCache</PackageId>
 		<Version>1.0.0</Version>
 		<Authors>Janzen Houchen-Wilder</Authors>
 		<Description>Thread-safe cache with LRU, time-based, and size-based eviction.</Description>
