@@ -207,6 +207,7 @@
         public void PutMany(IEnumerable<(TKey key, TValue value, QuickCacheEntryOptions? options)> items)
         {
             ThrowIfDisposed();
+            _timer.Change(Timeout.Infinite, Timeout.Infinite);
             lock (_lock)
             {
                 foreach (var (key, value, options) in items)
@@ -214,6 +215,7 @@
                     PutIndividualItem(key, value, options);
                 }
             }
+            _timer.Change(_cleanupInterval, _cleanupInterval);
         }
 
         private void PutIndividualItem(TKey key, TValue value, QuickCacheEntryOptions? options)
