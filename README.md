@@ -1,7 +1,7 @@
-# QuickCache
+# LightCache
 A memory cache that evicts based on LRU, time, and size.
 
-QuickCache is a lightweight, thread-safe in-memory cache for .NET that supports:<br>
+LightCache is a lightweight, thread-safe in-memory cache for .NET that supports:<br>
 
 Least Recently Used (LRU) eviction<br>
 Absolute and sliding expiration<br>
@@ -25,19 +25,19 @@ To install, clone the repository
 ```git clone https://github.com/janzenhouchenwilder/QuickCache.git```
 
 __To use__<br>
-```var cache = new QuickCache<string, string>(10000);```<br>
+```var cache = new LightCache<string, string>(10000);```<br>
 or for dependency injection<br>
-```services.AddSingleton<IQuickCache<string, string>, QuickCache<int, int>>();```<br>
+```services.AddSingleton<ILightCache<string, string>, LightCache<int, int>>();```<br>
 If you want to set the size of the cache<br>
 ```
-builder.Services.AddSingleton<IQuickCache<int, Person>>(options =>
+builder.Services.AddSingleton<ILightCache<int, Person>>(options =>
 {
-    return new QuickCache<int, Person>(50000, 20000);
+    return new LightCache<int, Person>(50000, 20000);
 });
 ```
 
 __Add or update an item__<br>
-```cache.Put("key", "value", new QuickCacheEntryOptions { Size = 1, AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10) });```
+```cache.Put("key", "value", new LightCacheEntryOptions { Size = 1, AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10) });```
 
 __Retrieve an item__<br>
 ```if (cache.TryGet("key", out var value)) { Console.WriteLine(value); }```
@@ -52,7 +52,7 @@ __Performance Notes__<br>
 Use `PutMany` for bulk inserts to avoid lock contention.<br>
 Designed for high-throughput with minimal allocations.
 
-Benchmark Dotnet for QuickCache `Put(TKey key, TValue, QuickCacheEntryOptions? options)` method.<br>
+Benchmark Dotnet for LightCache `Put(TKey key, TValue, LightCacheEntryOptions? options)` method.<br>
 | Method | Mean     | Error     | StdDev    | Gen0     | Gen1     | Allocated |
 |------- |---------:|----------:|----------:|---------:|---------:|----------:|
 | Put    | 3.802 ms | 0.0753 ms | 0.1451 ms | 578.1250 | 570.3125 |   3.48 MB |
@@ -66,7 +66,7 @@ Benchmark Dotnet for MemoryCache `Set(object key, TItem value, MemoryCacheEntryO
 
 Run time: 00:01:00 (60.23 sec), executed benchmarks: 1
 
-Benchmark Dotnet for QuickCache `TryGet(TKey key, out TValue value)` method.<br>
+Benchmark Dotnet for LightCache `TryGet(TKey key, out TValue value)` method.<br>
 | Method | Mean     | Error     | StdDev    | Allocated |
 |------- |---------:|----------:|----------:|----------:|
 | TryGet | 1.274 ms | 0.0250 ms | 0.0470 ms |      40 B |
