@@ -38,6 +38,11 @@ namespace Cache
         /// <param name="options">Optional cache entry configuration.</param>
         void Put(TKey key, TValue value, QuickCacheEntryOptions? options);
         /// <summary>
+        /// Adds or updates multiple cache entries. Use this to avoid thread contention and multiple cleanups during bulk inserts.
+        /// </summary>
+        /// <param name="items">A collection of key-value pairs to be added to the cache.</param>
+        void PutMany(IEnumerable<(TKey key, TValue value, QuickCacheEntryOptions? options)> items);
+        /// <summary>
         /// Removes a specific key from the cache.
         /// </summary>
         /// <param name="key">The key to be removed.</param>

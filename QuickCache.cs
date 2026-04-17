@@ -196,42 +196,63 @@
             ThrowIfDisposed();
             lock (_lock)
             {
-                if (options == null)
-                    options = new QuickCacheEntryOptions();
-                if (options.Size <= 0)
-                    throw new ArgumentOutOfRangeException(nameof(options.Size));
-                if (options.Size > _maxSize)
-                    throw new InsufficientMemoryException("Size of object cannot exceed max size of cache.");
+                PutIndividualItem(key, value, options);
+            }
+        }
 
-                if (cache.ContainsKey(key))
+        /// <summary>
+        /// For bulk inserts or updates, use this method to avoid thread contention and multiple cleanups.
+        /// </summary>
+        /// <param name="items">A collection of key-value pairs to be added to the cache.</param>
+        public void PutMany(IEnumerable<(TKey key, TValue value, QuickCacheEntryOptions? options)> items)
+        {
+            ThrowIfDisposed();
+            lock (_lock)
+            {
+                foreach (var (key, value, options) in items)
                 {
-                    currentSize -= cache[key].Value.size;
+                    PutIndividualItem(key, value, options);
+                }
+            }
+        }
+
+        private void PutIndividualItem(TKey key, TValue value, QuickCacheEntryOptions? options)
+        {
+            if (options == null)
+                options = new QuickCacheEntryOptions();
+            if (options.Size <= 0)
+                throw new ArgumentOutOfRangeException(nameof(options.Size));
+            if (options.Size > _maxSize)
+                throw new InsufficientMemoryException("Size of object cannot exceed max size of cache.");
+
+            if (cache.ContainsKey(key))
+            {
+                currentSize -= cache[key].Value.size;
                     cacheNodes.Remove(cache[key]);
-                }
+            }
 
-                var now = DateTimeOffset.UtcNow;
+            var now = DateTimeOffset.UtcNow;
 
-                var newNode = new LinkedListNode<itemEntry>(new itemEntry
-                {
-                    key = key,
-                    value = value,
-                    size = options.Size,
-                    lastAccessed = now,
-                    absExpiry = options?.AbsoluteExpirationRelativeToNow != null ?
+            var newNode = new LinkedListNode<itemEntry>(new itemEntry
+            {
+                key = key,
+                value = value,
+                size = options.Size,
+                lastAccessed = now,
+                absExpiry = options?.AbsoluteExpirationRelativeToNow != null ?
                         now.Add(options.AbsoluteExpirationRelativeToNow.Value) : null,
-                    slidingExpiry = options?.SlidingExpiration
-                });
-                cache[key] = newNode;
-                cacheNodes.AddLast(newNode);
-                currentSize += newNode.Value.size;
+               slidingExpiry = options?.SlidingExpiration
+            });
+            cache[key] = newNode;
+            cacheNodes.AddLast(newNode);
+            currentSize += newNode.Value.size;
 
-                while (currentSize > _maxSize || cache.Count > capacity)
-                {
-                    var node = cacheNodes.First;
-                    cache.Remove(node!.Value.key);
-                    currentSize -= node.Value.size;
-                    cacheNodes.RemoveFirst();
-                }
+            while (currentSize > _maxSize || cache.Count > capacity)
+            {
+                var node = cacheNodes.First;
+                cache.Remove(node!.Value.key);
+                currentSize -= node.Value.size;
+               cacheNodes.RemoveFirst();
             }
         }
 
