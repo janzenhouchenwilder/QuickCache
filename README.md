@@ -66,7 +66,7 @@ Benchmark Dotnet for MemoryCache `Set(object key, TItem value, MemoryCacheEntryO
 
 Run time: 00:01:00 (60.23 sec), executed benchmarks: 1
 
-Benchmark Dotnet for QuickCache `Put(TKey key, TValue, QuickCacheEntryOptions? options)` method.<br>
+Benchmark Dotnet for QuickCache `TryGet(TKey key, out TValue value)` method.<br>
 | Method | Mean     | Error     | StdDev    | Allocated |
 |------- |---------:|----------:|----------:|----------:|
 | TryGet | 1.274 ms | 0.0250 ms | 0.0470 ms |      40 B |
