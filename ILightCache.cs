@@ -1,11 +1,11 @@
 ﻿using System;
 
-namespace Cache
+namespace LightMemCache
 {
     ///<summary>
     ///Represents a thread-safe in-memory LRU cache with optional expiration and size-based eviction.
     ///</summary>
-    public interface IQuickCache<TKey, TValue> : IDisposable
+    public interface ILightCache<TKey, TValue> : IDisposable
     {
         /// <summary>
         /// Retrieves the keys as an IEnumerable collection of type TKey. 
@@ -36,12 +36,12 @@ namespace Cache
         /// <param name="key">The key of the item.</param>
         /// <param name="value">The value to be saved to the cache.</param>
         /// <param name="options">Optional cache entry configuration.</param>
-        void Put(TKey key, TValue value, QuickCacheEntryOptions? options);
+        void Put(TKey key, TValue value, LightCacheEntryOptions? options);
         /// <summary>
         /// Adds or updates multiple cache entries. Use this to avoid thread contention and multiple cleanups during bulk inserts.
         /// </summary>
         /// <param name="items">A collection of key-value pairs to be added to the cache.</param>
-        void PutMany(IEnumerable<(TKey key, TValue value, QuickCacheEntryOptions? options)> items);
+        void PutMany(IEnumerable<(TKey key, TValue value, LightCacheEntryOptions? options)> items);
         /// <summary>
         /// Removes a specific key from the cache.
         /// </summary>

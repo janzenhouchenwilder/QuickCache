@@ -1,9 +1,9 @@
-﻿namespace Cache
+﻿namespace LightMemCache
 {
     /// <summary>
     /// Represents a thread-safe in-memory cache that supports least-recently-used, optional expiration, size-limits, and background cleanup.
     /// </summary>
-    public class QuickCache<TKey, TValue> : IQuickCache<TKey, TValue> where TKey : notnull
+    public class LightCache<TKey, TValue> : ILightCache<TKey, TValue> where TKey : notnull
     {
         private bool _disposed;
         public void Dispose()
@@ -20,7 +20,7 @@
         private void ThrowIfDisposed()
         {
             if (_disposed)
-                throw new ObjectDisposedException(nameof(QuickCache<TKey, TValue>));
+                throw new ObjectDisposedException(nameof(LightCache<TKey, TValue>));
         }
 
         private void CleanUp()
@@ -111,7 +111,7 @@
         /// </summary>
         /// <param name="maxSize">Maximum size of all items.</param>
         /// <param name="capacity">Maximum number of cache entries.</param>
-        public QuickCache(long maxSize = 10000, int capacity = 3000)
+        public LightCache(long maxSize = 10000, int capacity = 3000)
         {
             if (maxSize <= 0)
                 throw new ArgumentOutOfRangeException(nameof(maxSize));
@@ -194,7 +194,7 @@
         /// <remarks>
         /// Evicts the least recently used item in the cache if at capacity.
         /// </remarks>
-        public void Put(TKey key, TValue value, QuickCacheEntryOptions? options = null)
+        public void Put(TKey key, TValue value, LightCacheEntryOptions? options = null)
         {
             ThrowIfDisposed();
             lock (_lock)
@@ -207,7 +207,7 @@
         /// For bulk inserts or updates, use this method to avoid thread contention and multiple cleanups.
         /// </summary>
         /// <param name="items">A collection of key-value pairs to be added to the cache.</param>
-        public void PutMany(IEnumerable<(TKey key, TValue value, QuickCacheEntryOptions? options)> items)
+        public void PutMany(IEnumerable<(TKey key, TValue value, LightCacheEntryOptions? options)> items)
         {
             ThrowIfDisposed();
             _timer.Change(Timeout.Infinite, Timeout.Infinite);
@@ -233,10 +233,10 @@
             _timer.Change(_cleanupInterval, _cleanupInterval);
         }
 
-        private void PutIndividualItem(TKey key, TValue value, QuickCacheEntryOptions? options)
+        private void PutIndividualItem(TKey key, TValue value, LightCacheEntryOptions? options)
         {
             if (options == null)
-                options = new QuickCacheEntryOptions();
+                options = new LightCacheEntryOptions();
             if (options.Size <= 0)
                 throw new ArgumentOutOfRangeException(nameof(options.Size));
             if (options.Size > _maxSize)

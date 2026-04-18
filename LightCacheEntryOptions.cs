@@ -1,11 +1,11 @@
 ﻿using System;
 
-namespace Cache
+namespace LightMemCache
 {
     /// <summary>
     /// Configuration for a cache entry.
     /// </summary>
-    public class QuickCacheEntryOptions
+    public class LightCacheEntryOptions
     {
         /// <summary>
         /// The relative time the entry expires.
