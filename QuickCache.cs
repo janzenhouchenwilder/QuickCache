@@ -74,7 +74,7 @@
                 ThrowIfDisposed();
                 lock (_lock)
                 {
-                    return cache.Keys.ToList();
+                    return cache.Keys;
                 }
             }
         }
