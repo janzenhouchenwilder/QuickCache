@@ -17,10 +17,18 @@
 	<ItemGroup>
 		<None Include="image0.png" Pack="true" PackagePath="" />
 	</ItemGroup>
+
+	<PropertyGroup>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="README.md" Pack="true" PackagePath="" />
+	</ItemGroup>
 	
 	<PropertyGroup>
 		<PackageId>LightCache</PackageId>
-		<Version>1.0.1</Version>
+		<Version>1.0.2</Version>
 		<Authors>Janzen Houchen-Wilder</Authors>
 		<Description>Thread-safe cache with LRU, time-based, and size-based eviction.</Description>
 		<PackageProjectUrl>https://github.com/janzenhouchenwilder/QuickCache</PackageProjectUrl>
