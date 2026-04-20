@@ -216,17 +216,14 @@
                 int count = 0;
                 foreach (var (key, value, options) in items)
                 {
-                    lock (_lock)
-                    {
-                        PutIndividualItem(key, value, options);
+                    PutIndividualItem(key, value, options);
 
-                        count++;
-                        if (count % 500 == 0)
-                        {
-                            Monitor.Exit(_lock);
-                            Thread.Yield();
-                            Monitor.Enter(_lock);
-                        }
+                    count++;
+                    if (count % 500 == 0)
+                    {
+                        Monitor.Exit(_lock);
+                        Thread.Yield();
+                        Monitor.Enter(_lock);
                     }
                 }
             }
@@ -245,7 +242,7 @@
             if (cache.ContainsKey(key))
             {
                 currentSize -= cache[key].Value.size;
-                    cacheNodes.Remove(cache[key]);
+                cacheNodes.Remove(cache[key]);
             }
 
             var now = DateTimeOffset.UtcNow;
@@ -258,7 +255,7 @@
                 lastAccessed = now,
                 absExpiry = options?.AbsoluteExpirationRelativeToNow != null ?
                         now.Add(options.AbsoluteExpirationRelativeToNow.Value) : null,
-               slidingExpiry = options?.SlidingExpiration
+                slidingExpiry = options?.SlidingExpiration
             });
             cache[key] = newNode;
             cacheNodes.AddLast(newNode);
@@ -269,7 +266,7 @@
                 var node = cacheNodes.First;
                 cache.Remove(node!.Value.key);
                 currentSize -= node.Value.size;
-               cacheNodes.RemoveFirst();
+                cacheNodes.RemoveFirst();
             }
         }
 
