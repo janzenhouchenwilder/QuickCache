@@ -103,7 +103,6 @@ Run time: 00:00:41 (41.65 sec), executed benchmarks: 1
 
 Benchmark Dotnet for MemoryCache `TryGetValue(object key, out TItem value)` method.
 
-Method	Mean	Error	StdDev	Gen0	Allocated
 | Method | Mean     | Error    | StdDev   | Gen0    | Allocated |
 |------- |---------:|---------:|---------:|--------:|----------:|
 | TryGet | 821.1 us | 16.18 us | 34.12 us | 69.3359 | 427.38 KB |
