@@ -1,88 +1,108 @@
 # LightCache
 A memory cache that evicts based on LRU, time, and size.
 
-LightCache is a lightweight, thread-safe in-memory cache for .NET that supports:<br>
+LightCache is a lightweight, thread-safe in-memory cache for .NET that supports:
 
-Least Recently Used (LRU) eviction<br>
-Absolute and sliding expiration<br>
-Size-based eviction<br>
-Background cleanup<br>
-Bulk insert support for high-performance scenarios
+- Least Recently Used (LRU) eviction
+- Absolute and sliding expiration
+- Size-based eviction
+- Background cleanup
+- Bulk insert support for high-performance scenarios
 
-__Features__<br>
-Thread-safe using internal locking<br>
-LRU eviction via linked list tracking<br>
-Configurable size limits to prevent memory overuse<br>
-Expiration support<br>
-Absolute expiration<br>
-Sliding expiration<br>
-Bulk operations to reduce lock contention<br>
-Background cleanup using a timer
+## Features
 
-__Installation__
-To install, clone the repository
+- Thread-safe using internal locking
+- LRU eviction via linked list tracking
+- Configurable size limits to prevent memory overuse
+- Expiration support
+  - Absolute expiration
+  - Sliding expiration
+- Bulk operations to reduce lock contention
+- Background cleanup using a timer
 
-```git clone https://github.com/janzenhouchenwilder/QuickCache.git```
+## Installation
 
-__To use__<br>
-```var cache = new LightCache<string, string>(10000);```<br>
-or for dependency injection<br>
-```services.AddSingleton<ILightCache<string, string>, LightCache<int, int>>();```<br>
-If you want to set the size of the cache<br>
+To install, clone the repository:
+
+```
+git clone https://github.com/janzenhouchenwilder/QuickCache.git
+```
+Usage
+```
+var cache = new LightCache<string, string>(10000);
+```
+
+Or for dependency injection:
+```
+services.AddSingleton<ILightCache<string, string>, LightCache<int, int>>();
+```
+
+If you want to set the size of the cache:
+
 ```
 builder.Services.AddSingleton<ILightCache<int, Person>>(options =>
 {
     return new LightCache<int, Person>(50000, 20000);
 });
 ```
+Add or update an item
+```
+cache.Put("key", "value", new LightCacheEntryOptions 
+{ 
+    Size = 1, 
+    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10) 
+});
+```
+Retrieve an item
+```
+if (cache.TryGet("key", out var value)) 
+{ 
+    Console.WriteLine(value); 
+}
+```
+Remove an item
+```
+if (cache.TryGet("key", out var value)) 
+{ 
+    Console.WriteLine(value); 
+}
+```
+Insert multiple items (Large inserts)
+```
+cache.PutMany(items);
+```
 
-__Add or update an item__<br>
-```cache.Put("key", "value", new LightCacheEntryOptions { Size = 1, AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10) });```
+Performance Notes
 
-__Retrieve an item__<br>
-```if (cache.TryGet("key", out var value)) { Console.WriteLine(value); }```
-
-__Remove an item__<br>
-```if (cache.TryGet("key", out var value)) { Console.WriteLine(value); }```
-
-__Insert multiple items (Large inserts)__<br>
-```cache.PutMany(items);```
-
-__Performance Notes__<br>
-Use `PutMany` for bulk inserts to avoid lock contention.<br>
+Use `PutMany` for bulk inserts to avoid lock contention.
 Designed for high-throughput with minimal allocations.
 
-Benchmark Dotnet for LightCache `Put(TKey key, TValue, LightCacheEntryOptions? options)` method.<br>
-| Method | Mean     | Error     | StdDev    | Gen0     | Gen1     | Allocated |
-|------- |---------:|----------:|----------:|---------:|---------:|----------:|
-| Put    | 3.802 ms | 0.0753 ms | 0.1451 ms | 578.1250 | 570.3125 |   3.48 MB |
+LightCache `Put`
+Method	Mean	Error	StdDev	Gen0	Gen1	Allocated
+Put	3.802 ms	0.0753 ms	0.1451 ms	578.1250	570.3125	3.48 MB
 
 Run time: 00:00:33 (33.73 sec), executed benchmarks: 1
 
-Benchmark Dotnet for MemoryCache `Set(object key, TItem value, MemoryCacheEntryOptions? options)` method.<br>
-| Method | Mean     | Error     | StdDev    | Gen0     | Gen1     | Allocated |
-|------- |---------:|----------:|----------:|---------:|---------:|----------:|
-| Set    | 4.530 ms | 0.0906 ms | 0.2449 ms | 695.3125 | 687.5000 |   4.17 MB |
+MemoryCache `Set`
+Method	Mean	Error	StdDev	Gen0	Gen1	Allocated
+Set	4.530 ms	0.0906 ms	0.2449 ms	695.3125	687.5000	4.17 MB
 
 Run time: 00:01:00 (60.23 sec), executed benchmarks: 1
 
-Benchmark Dotnet for LightCache `TryGet(TKey key, out TValue value)` method.<br>
-| Method | Mean     | Error     | StdDev    | Allocated |
-|------- |---------:|----------:|----------:|----------:|
-| TryGet | 1.274 ms | 0.0250 ms | 0.0470 ms |      40 B |
+LightCache `TryGet`
+Method	Mean	Error	StdDev	Allocated
+TryGet	1.274 ms	0.0250 ms	0.0470 ms	40 B
 
 Run time: 00:00:41 (41.65 sec), executed benchmarks: 1
 
-Benchmark Dotnet for MemoryCache `TryGetValue(object key, out TItem value)` method.<br>
-| Method | Mean     | Error    | StdDev   | Gen0    | Allocated |
-|------- |---------:|---------:|---------:|--------:|----------:|
-| TryGet | 821.1 us | 16.18 us | 34.12 us | 69.3359 | 427.38 KB |
+MemoryCache `TryGetValue`
+Method	Mean	Error	StdDev	Gen0	Allocated
+TryGet	821.1 us	16.18 us	34.12 us	69.3359	427.38 KB
 
 Run time: 00:00:57 (57.74 sec), executed benchmarks: 1
 
 These tests were conducted by querying a database with 18000 rows of data and adding/retrieving from the cache.
 
-__Limitations__<br>
-In-memory only, not distributed<br>
-Global lock may cause contention under extreme parallel locks
-
+Limitations
+In-memory only, not distributed
+Global lock may cause contention under extreme parallel loads
