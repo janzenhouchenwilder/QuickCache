@@ -25,7 +25,7 @@ LightCache is a lightweight, thread-safe in-memory cache for .NET that supports:
 To install, clone the repository:
 
 ```
-git clone https://github.com/janzenhouchenwilder/QuickCache.git
+git clone https://github.com/janzenhouchenwilder/LightCache.git
 ```
 Usage
 ```
