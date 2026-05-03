@@ -105,17 +105,20 @@
 
         private long currentSize;
         private readonly long _maxSize;
+        private readonly long maxItemSize;
 
         /// <summary>
         /// Initializes a new instance of the in-memory cache.
         /// </summary>
         /// <param name="maxSize">Maximum size of all items.</param>
         /// <param name="capacity">Maximum number of cache entries.</param>
-        public LightCache(long maxSize = 10000, int capacity = 3000)
+        /// <param name="maxItemSize">Maximum size of a single item.</param>
+        public LightCache(long maxSize = 10000, int capacity = 3000, long maxItemSize = Int64.MaxValue)
         {
             if (maxSize <= 0)
                 throw new ArgumentOutOfRangeException(nameof(maxSize));
             this.capacity = capacity;
+            this.maxItemSize = maxItemSize;
             cache = new Dictionary<TKey, LinkedListNode<itemEntry>>(this.capacity);
             cacheNodes = new LinkedList<itemEntry>();
 
@@ -238,6 +241,8 @@
                 throw new ArgumentOutOfRangeException(nameof(options.Size));
             if (options.Size > _maxSize)
                 throw new InsufficientMemoryException("Size of object cannot exceed max size of cache.");
+            if (options.Size > maxItemSize)
+                throw new InsufficientMemoryException("Size of object cannot exceed max item size of cache.");
 
             if (cache.ContainsKey(key))
             {
